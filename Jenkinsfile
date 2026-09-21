@@ -5,7 +5,7 @@ pipeline {
         AWS_REGION = 'ap-south-1'
         ECR_REPOSITORY = 'seclock'
         AWS_ACCOUNT_ID = '380314682565'
-        ECR_REGISTRY = "${380314682565}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        ECR_REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         IMAGE_NAME = "${ECR_REGISTRY}/${ECR_REPOSITORY}"
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
@@ -25,6 +25,7 @@ pipeline {
                     . venv/bin/activate
                     pip install --upgrade pip
                     pip install -r requirements.txt
+                    pip install pytest
                 '''
             }
         }
@@ -40,7 +41,13 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                echo 'SonarQube analysis will be configured here'
+                script {
+                    def scannerHome = tool 'SonarQube'
+
+                    withSonarQubeEnv('sonarqube') {
+                        sh "${scannerHome}/bin/sonar-scanner"
+                    }
+                }
             }
         }
 
