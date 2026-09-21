@@ -23,9 +23,10 @@ pipeline {
                 sh '''
                     python3 -m venv venv
                     . venv/bin/activate
+
                     pip install --upgrade pip
                     pip install -r requirements.txt
-                    pip install pytest
+                    pip install pytest httpx2
                 '''
             }
         }
@@ -64,7 +65,9 @@ pipeline {
             steps {
                 sh '''
                     aws ecr get-login-password --region ${AWS_REGION} | \
-                    docker login --username AWS --password-stdin ${ECR_REGISTRY}
+                    docker login \
+                    --username AWS \
+                    --password-stdin ${ECR_REGISTRY}
                 '''
             }
         }
@@ -81,7 +84,9 @@ pipeline {
 
     post {
         always {
-            sh 'rm -rf venv || true'
+            sh '''
+                rm -rf venv || true
+            '''
         }
     }
 }
