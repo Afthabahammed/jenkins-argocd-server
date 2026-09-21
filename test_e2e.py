@@ -4,7 +4,7 @@ from main import app, state
 
 client = TestClient(app)
 
-def run_e2e_tests():
+def test_e2e_tests():
     print("==========================================================================")
     print(" Running End-to-End Automated Integration Tests for Seclock ")
     print("==========================================================================")
